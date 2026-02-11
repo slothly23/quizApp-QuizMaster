@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { clearUser, loadUser } from "../utils/Storage";
+import { clearUser, loadUser, saveResult } from "../utils/Storage";
+import QuestionCard from "../components/QuestionCard";
 
 const Quiz = () => {
+  // ================================
+  // STATE
+  // ================================
+
   const [questions, setQuestions] = useState([]);
+  const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const user = loadUser();
@@ -17,17 +25,33 @@ const Quiz = () => {
 
   const fetchQuestions = async () => {
     try {
-      const response = await fetch(
-        "https://opentdb.com/api.php?amount=5&category=9&type=multiple",
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch(
+        "https://opentdb.com/api.php?amount=5&type=multiple",
       );
 
-      const data = await response.json();
+      // cek status HTTP
+      if (!res.ok) {
+        throw new Error("Network response error");
+      }
+
+      const data = await res.json();
       console.log("HASIL API:", data);
 
-      setQuestions(data.results);
-    } catch (error) {
-      console.error(error);
-      setError("Gagal fetch data");
+      // format jawaban + shuffle
+      const formatted = data.results.map((q) => ({
+        ...q,
+        all_answers: [q.correct_answer, ...q.incorrect_answers].sort(
+          () => Math.random() - 0.5,
+        ),
+      }));
+
+      setQuestions(formatted);
+    } catch (err) {
+      console.error(err);
+      setError("Gagal mengambil soal. Coba lagi.");
     } finally {
       setLoading(false);
     }
@@ -37,23 +61,49 @@ const Quiz = () => {
     fetchQuestions();
   }, []);
 
+  // ================================
+  // HANDLE JAWABAN
+  // ================================
+
+  const handleAnswer = (answer) => {
+    const current = questions[index];
+
+    let newScore = score;
+    // cek benar atau salah
+    if (answer === current.correct_answer) {
+      newScore = score + 1;
+      setScore(newScore);
+    }
+
+    const nextIndex = index + 1;
+
+    // kalau masih ada soal -> lanjut
+    if (nextIndex < questions.length) {
+      setIndex(nextIndex);
+    } else {
+      // kalau habis -> selesai
+      saveResult({
+        score: newScore,
+        total: questions.length,
+      });
+
+      navigate("/result");
+    }
+  };
+
   return (
     <div>
-      <h1>Quiz Page (Test Fetch)</h1>
-      <p>Halo {user}</p>
+      <h1>Quiz Page</h1>
 
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      <p>
+        Soal {index + 1} / {questions.length}
+      </p>
 
-      <ul>
-        {questions.map((q, i) => (
-          <li key={i}>{q.question}</li>
-        ))}
-      </ul>
+      <p>Score: {score}</p>
 
-      <button onClick={logout}>
-        Logout
-      </button>
+      <QuestionCard question={questions[index]} onAnswer={handleAnswer} />
+
+      <button onClick={logout}>Logout</button>
     </div>
   );
 };
