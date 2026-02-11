@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { clearUser, loadUser } from "../utils/Storage";
 
 const Quiz = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+  const user = loadUser();
+
+  const logout = () => {
+    clearUser();
+    navigate("/login");
+  };
 
   const fetchQuestions = async () => {
     try {
@@ -30,6 +40,7 @@ const Quiz = () => {
   return (
     <div>
       <h1>Quiz Page (Test Fetch)</h1>
+      <p>Halo {user}</p>
 
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
@@ -39,6 +50,10 @@ const Quiz = () => {
           <li key={i}>{q.question}</li>
         ))}
       </ul>
+
+      <button onClick={logout}>
+        Logout
+      </button>
     </div>
   );
 };
