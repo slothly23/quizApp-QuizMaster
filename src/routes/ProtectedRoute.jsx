@@ -1,3 +1,5 @@
+import { Navigate } from "react-router-dom";
+
 /*
   children  -> halaman yang mau dilindungi
   isAllowed -> syarat boleh masuk (true/false)

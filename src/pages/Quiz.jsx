@@ -91,20 +91,20 @@ const Quiz = () => {
   // ================================
   useEffect(() => {
     if (timeLeft <= 0) {
-      finishQuiz();
+      finishQuiz(answers, score);
     }
-  }, [timeLeft]);
+  }, [timeLeft, answers, score]); // dependensi biar selalu update
 
   // ================================
   // FINISH FUNCTION (dipakai 2x)
   // ================================
-  const finishQuiz = () => {
+  const finishQuiz = (finalAnswers, finalScore) => {
     saveResult({
-      score,
+      score: finalScore,
       total: questions.length,
     });
 
-    saveQuizDetail(answers);
+    saveQuizDetail(finalAnswers);
 
     navigate("/result");
   };
@@ -117,10 +117,11 @@ const Quiz = () => {
 
     const isCorrect = answer === current.correct_answer;
 
-    // tambah skor kalau benar
-    if (isCorrect) {
-      setScore((s) => s + 1);
-    }
+    // ✅ hitung skor baru manual
+    const newScore = isCorrect ? score + 1 : score;
+
+    // update state
+    setScore(newScore);
 
     // simpan detail jawaban
     const newAnswers = [
@@ -131,7 +132,6 @@ const Quiz = () => {
         user: answer,
       },
     ];
-
     setAnswers(newAnswers);
 
     const next = index + 1;
@@ -140,7 +140,8 @@ const Quiz = () => {
     if (next < questions.length) {
       setIndex(next);
     } else {
-      finishQuiz(); // selesai normal
+      // pakai data terbaru, bukan state lama
+      finishQuiz(newAnswers, newScore);
     }
   };
 
@@ -156,22 +157,44 @@ const Quiz = () => {
   if (!questions.length) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h1>Quiz</h1>
-      {/* ========================= */}
-      {/* TIMER UI */}
-      {/* ========================= */}
-      <h3>⏳ Time Left: {timeLeft}s</h3>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-8 space-y-6">
+        {/* HEADER */}
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-800">Quiz Time 🚀</h1>
 
-      {/* info progress */}
-      <p>
-        Soal {index + 1} / {questions.length}
-      </p>
+          <button
+            onClick={logout}
+            className="text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+          >
+            Logout
+          </button>
+        </div>
 
-      {/* tampilkan 1 soal */}
-      <QuestionCard question={questions[index]} onAnswer={handleAnswer} />
+        {/* TIMER */}
+        <div className="flex justify-between items-center">
+          <div className="bg-gray-100 px-4 py-2 rounded-lg font-semibold">
+            ⏳ {timeLeft}s
+          </div>
 
-      <button onClick={logout}>Logout</button>
+          <p className="text-gray-600">
+            Soal {index + 1} / {questions.length}
+          </p>
+        </div>
+
+        {/* PROGRESS BAR */}
+        <div className="w-full bg-gray-200 rounded-full h-3">
+          <div
+            className="bg-indigo-600 h-3 rounded-full transition-all duration-300"
+            style={{
+              width: `${((index + 1) / questions.length) * 100}%`,
+            }}
+          />
+        </div>
+
+        {/* QUESTION */}
+        <QuestionCard question={questions[index]} onAnswer={handleAnswer} />
+      </div>
     </div>
   );
 };
