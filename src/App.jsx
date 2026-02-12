@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Quiz from "./pages/Quiz";
 import Result from "./pages/Result";
 import { hasResult, loadUser } from "./utils/Storage";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
