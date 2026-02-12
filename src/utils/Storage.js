@@ -1,3 +1,8 @@
+/*
+  Semua urusan localStorage dikumpulkan di sini
+  supaya tidak berantakan di banyak file
+*/
+
 // ================================
 // SIMPAN DATA USER
 // ================================
@@ -29,4 +34,29 @@ export function saveResult(result) {
 export function loadResult() {
   const data = localStorage.getItem(RESULT_KEY);
   return data ? JSON.parse(data) : null;
+}
+
+
+// ================================
+// DETAIL JAWABAN
+// ================================
+const QUIZ_KEY = "quiz_detail";
+
+export function saveQuizDetail(data) {
+  localStorage.setItem(QUIZ_KEY, JSON.stringify(data));
+}
+
+export function loadQuizDetail() {
+  const d = localStorage.getItem(QUIZ_KEY);
+  return d ? JSON.parse(d) : null;
+}
+
+export function clearQuizDetail() {
+  localStorage.removeItem(QUIZ_KEY);
+}
+
+
+// helper boolean
+export function hasResult() {
+  return !!localStorage.getItem(RESULT_KEY);
 }
