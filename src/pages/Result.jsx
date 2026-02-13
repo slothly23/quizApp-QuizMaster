@@ -193,7 +193,7 @@ const Result = () => {
             onClick={logout}
             className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg"
           >
-            <LogOut size={16} /> Keluar
+            <LogOut size={16} /> Logout
           </button>
         </div>
 
