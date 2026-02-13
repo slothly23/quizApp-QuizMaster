@@ -11,6 +11,8 @@ import {
   saveResult,
 } from "../utils/Storage";
 import QuestionCard from "../components/QuestionCard";
+import { motion } from "framer-motion";
+import { Clock } from "lucide-react";
 
 const Quiz = () => {
   // ================================
@@ -196,48 +198,84 @@ const Quiz = () => {
     navigate("/login");
   };
 
-  if (!questions.length) return <p>Loading...</p>;
+  // if (!questions.length) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white rounded-2xl shadow-2xl p-10 flex flex-col items-center gap-4"
+        >
+          {/* spinner */}
+          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+
+          <p className="text-gray-600 font-medium">Mengambil soal...</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-8 space-y-6">
-        {/* HEADER */}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "spring", stiffness: 120 }}
+      className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 flex items-center justify-center p-6"
+    >
+      {/* CARD */}
+      <div className="bg-white/95 backdrop-blur-md w-full max-w-2xl rounded-3xl shadow-2xl p-8 space-y-6 overflow-hidden">
+        {/* ================= HEADER ================= */}
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">Quiz Time 🚀</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Quiz Time</h1>
+
+          {/* 👇 TAMBAHAN */}
+          <p className="text-sm text-gray-500">Hi {user || "Guest"} 👋</p>
 
           <button
             onClick={logout}
-            className="text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+            className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-xl"
           >
             Logout
           </button>
         </div>
 
-        {/* TIMER */}
-        <div className="flex justify-between items-center">
-          <div className="bg-gray-100 px-4 py-2 rounded-lg font-semibold">
-            ⏳ {timeLeft}s
+        {/* ================= TIMER + PROGRESS INFO ================= */}
+        <div className="flex items-center justify-between">
+          {/* Timer Chip */}
+          <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl font-semibold shadow-sm">
+            <Clock size={18} />
+            {timeLeft}s
           </div>
 
-          <p className="text-gray-600">
+          <p className="text-gray-600 font-medium">
             Soal {index + 1} / {questions.length}
           </p>
         </div>
 
-        {/* PROGRESS BAR */}
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div
-            className="bg-indigo-600 h-3 rounded-full transition-all duration-300"
-            style={{
+        {/* ================= PROGRESS BAR ================= */}
+        <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+            animate={{
               width: `${((index + 1) / questions.length) * 100}%`,
             }}
+            transition={{ duration: 0.4 }}
           />
         </div>
 
-        {/* QUESTION */}
-        <QuestionCard question={questions[index]} onAnswer={handleAnswer} />
+        {/* ================= QUESTION ================= */}
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -40 }}
+          transition={{ duration: 0.25 }}
+        >
+          <QuestionCard question={questions[index]} onAnswer={handleAnswer} />
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
