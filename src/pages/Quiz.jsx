@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   clearQuizDetail,
+  clearQuizSession,
   clearUser,
+  loadQuizSession,
   loadUser,
   saveQuizDetail,
+  saveQuizSession,
   saveResult,
 } from "../utils/Storage";
 import QuestionCard from "../components/QuestionCard";
@@ -28,6 +31,9 @@ const Quiz = () => {
   const navigate = useNavigate();
   const user = loadUser();
 
+  // ================================
+  // FETCH QUESTIONS DARI API
+  // ================================
   const fetchQuestions = async () => {
     try {
       setLoading(true);
@@ -62,9 +68,42 @@ const Quiz = () => {
     }
   };
 
+  // ================================
+  // LOAD SESSION JIKA ADA
+  // ================================
+
   useEffect(() => {
-    fetchQuestions();
+    const savedSession = loadQuizSession();
+
+    // kalau ada session yang disimpan, load itu
+    if (savedSession) {
+      setQuestions(savedSession.questions);
+      setIndex(savedSession.answers.length); // index berdasarkan jumlah jawaban yang sudah ada
+      setScore(savedSession.score);
+      setAnswers(savedSession.answers);
+      setTimeLeft(savedSession.timeLeft);
+      setLoading(false);
+    } else {
+      // kalau tidak ada, fetch soal baru
+      fetchQuestions();
+    }
   }, []);
+
+  // ================================
+  // SIMPAN SESSION SETIAP ADA PERUBAHAN
+  // ================================
+
+  useEffect(() => {
+    if (!questions.length) return;
+
+    saveQuizSession({
+      questions,
+      index,
+      score,
+      answers,
+      timeLeft,
+    });
+  }, [questions, index, score, answers, timeLeft]);
 
   // ================================
   // TIMER LOGIC
@@ -99,6 +138,9 @@ const Quiz = () => {
   // FINISH FUNCTION (dipakai 2x)
   // ================================
   const finishQuiz = (finalAnswers, finalScore) => {
+    clearQuizSession(); // hapus session yang tersimpan
+
+    // simpan result akhir
     saveResult({
       score: finalScore,
       total: questions.length,

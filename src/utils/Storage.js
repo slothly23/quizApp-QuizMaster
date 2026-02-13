@@ -147,3 +147,22 @@ export function loadQuizDetail() {
 export function clearQuizDetail() {
   localStorage.removeItem(QUIZ_KEY);
 }
+
+// =========================================
+// QUIZ SESSION (data sementara saat quiz berlangsung)
+// jika browser tiba-tiba ditutup / direfresh
+// =========================================
+
+const QUIZ_SESSION_KEY = "quiz_session";
+
+export function saveQuizSession(data) {
+  localStorage.setItem(QUIZ_SESSION_KEY, JSON.stringify(data));
+}
+
+export function loadQuizSession() {
+  return safeParse(QUIZ_SESSION_KEY, null);
+}
+
+export function clearQuizSession() {
+  localStorage.removeItem(QUIZ_SESSION_KEY);
+}
