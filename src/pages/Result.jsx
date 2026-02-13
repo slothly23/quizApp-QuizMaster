@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   clearQuizDetail,
+  clearResult,
   clearUser,
   loadQuizDetail,
   loadResult,
@@ -13,6 +14,13 @@ const Result = () => {
   // ambil hasil + detail dari local storage
   const result = loadResult();
   const detail = loadQuizDetail();
+
+  // handle tombol main lagi + logout
+  const playAgain = () => {
+    clearResult();
+    clearQuizDetail();
+    navigate("/quiz");
+  };
 
   const logout = () => {
     clearUser();
@@ -140,7 +148,7 @@ const Result = () => {
         {/* BUTTONS */}
         <div className="flex justify-center gap-4 pt-4">
           <button
-            onClick={() => navigate("/quiz")}
+           onClick={playAgain}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition"
           >
             Main Lagi

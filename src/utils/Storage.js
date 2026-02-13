@@ -105,6 +105,13 @@ export function hasResult() {
   return loadResult() !== null;
 }
 
+/*
+  Hapus result sebelum mulai quiz baru
+*/
+export function clearResult() {
+  localStorage.removeItem(RESULT_KEY);
+}
+
 
 
 // =========================================

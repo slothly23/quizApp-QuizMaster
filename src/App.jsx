@@ -4,41 +4,44 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Quiz from "./pages/Quiz";
 import Result from "./pages/Result";
-import { hasResult, loadUser } from "./utils/Storage";
-import ProtectedRoute from "./routes/ProtectedRoute";
+import RequireAuth from "./routes/RequireAuth";
+import RequireResult from "./routes/RequireResult";
+import RedirectIfAuth from "./routes/RedirectIfAuth";
 
 function App() {
   return (
     <Routes>
-      {/* halaman awal → cek login */}
       <Route path="/" element={<Index />} />
 
-      {/* bebas diakses */}
-      <Route path="/login" element={<Login />} />
-
-      {/* 
-        QUIZ hanya boleh diakses kalau:
-        user sudah login
-      */}
+      {/* LOGIN → kalau sudah login, redirect ke quiz */}
       <Route
-        path="/quiz"
+        path="/login"
         element={
-          <ProtectedRoute isAllowed={!!loadUser()}>
-            <Quiz />
-          </ProtectedRoute>
+          <RedirectIfAuth>
+            <Login />
+          </RedirectIfAuth>
         }
       />
 
-      {/* 
-        RESULT hanya boleh diakses kalau:
-        sudah ada hasil quiz
-      */}
+      {/* QUIZ → harus login */}
+      <Route
+        path="/quiz"
+        element={
+          <RequireAuth>
+            <Quiz />
+          </RequireAuth>
+        }
+      />
+
+      {/* RESULT → harus login + punya result */}
       <Route
         path="/result"
         element={
-          <ProtectedRoute isAllowed={hasResult()} redirect="/quiz">
-            <Result />
-          </ProtectedRoute>
+          <RequireAuth>
+            <RequireResult>
+              <Result />
+            </RequireResult>
+          </RequireAuth>
         }
       />
     </Routes>
