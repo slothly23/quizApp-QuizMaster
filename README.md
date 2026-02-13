@@ -28,3 +28,6 @@ Aplikasi ini mengambil soal secara real-time dari Open Trivia DB API dan menduku
 - Lucide React (icons)
 - LocalStorage (session persistence)
 - Open Trivia DB API (https://opentdb.com/)
+
+---
+<img width="1533" height="900" alt="image" src="https://github.com/user-attachments/assets/4dd42dae-8fc4-4915-bb6f-a577a75c4b77" />
