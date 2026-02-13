@@ -254,16 +254,16 @@ const Quiz = () => {
           </p>
         </div>
 
-        {/* ================= PROGRESS BAR ================= */}
-        <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
-            animate={{
-              width: `${((index + 1) / questions.length) * 100}%`,
-            }}
-            transition={{ duration: 0.4 }}
-          />
-        </div>
+       {/* ================= PROGRESS BAR ================= */}
+<div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+  <motion.div
+    className="h-full bg-indigo-500"
+    animate={{
+      width: `${((index + 1) / questions.length) * 100}%`,
+    }}
+    transition={{ duration: 0.35, ease: "easeOut" }}
+  />
+</div>
 
         {/* ================= QUESTION ================= */}
         <motion.div
