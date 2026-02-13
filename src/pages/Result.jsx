@@ -36,6 +36,7 @@ const Result = () => {
   const logout = () => {
     clearUser();
     clearQuizDetail();
+    clearQuizSession();
     navigate("/login");
   };
 

@@ -195,6 +195,7 @@ const Quiz = () => {
   const logout = () => {
     clearUser();
     clearQuizDetail();
+    clearQuizSession();
     navigate("/login");
   };
 
